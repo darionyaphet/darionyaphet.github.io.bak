@@ -1,0 +1,40 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>git | Hexo</title><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Archives</a></nav><div class="container post-meta"><div class="post-time">2018-08-01</div></div></div><div class="container post-header"><h1>git</h1></div><div class="container post-content"><p>如同生活中的许多伟大事件一样，<code>Git</code> 诞生于一个极富纷争大举创新的年代。Linux 内核开源项目绝大多数的维护工作都花在了提交补丁和保存归档的繁琐事务上。2005 年，开发 BitKeeper 的商业公司同 Linux 内核开源社区的合作关系结束，他们收回了免费使用 BitKeeper 的权力。迫使 Linux 开源社区不得不吸取教训，只有开发一套属于自己的版本控制系统才不至于重蹈覆辙。</p>
+<hr>
+<p><strong>Git 基础</strong></p>
+<p><code>Git</code> 和其他版本控制系统主要差别在于，<code>Git</code> 只关心文件数据的整体是否发生变化，而其他系统只关心文件内容的具体差异。<code>Git</code> 并不保存这些前后变化的差异数据。<code>Git</code> 更像是把变化的文件作快照后，记录在一个微型的文件系统中。每次提交更新时，它会遍历所有文件的指纹信息并对文件作快照，然后保存一个指向这次快照的索引。</p>
+<p><img src="18333fig0105-tn.png" alt="Git工作方式"></p>
+<p>保存到 <code>Git</code> 之前，所有数据都要进行内容的校验和计算，并将此结果作为数据的唯一标识和索引。换句话说，不可能在你修改了文件或目录之后，<code>Git</code> 一无所知。这项特性作为 <code>Git</code> 的设计哲学。</p>
+<p><strong>文件的三种状态</strong></p>
+<p>Git 内文件只有三种状态：已提交（committed），已修改（modified）和已暂存（staged）。</p>
+<p><code>已提交</code>表示该文件已经被安全地保存在本地数据库中了；</p>
+<p><code>已修改</code>表示修改了某个文件，但还没有提交保存；</p>
+<p><code>已暂存</code>表示把已修改的文件放在下次提交时要保存的清单中。</p>
+<p>文件流转的三个工作区域：Git 的工作目录，暂存区域，以及本地仓库。</p>
+<p>基本的 Git 工作流程如下：</p>
+<ol>
+<li>在工作目录中修改某些文件。</li>
+<li>对修改后的文件进行快照，然后保存到暂存区域。</li>
+<li>提交更新，将保存在暂存区域的文件快照永久转储。</li>
+</ol>
+<p><img src="18333fig0106-tn.png" alt="工作目录，暂存区域，以及本地仓库"></p>
+<p>工作目录下所有文件不外乎两种状态：已跟踪或未跟踪。<br>已跟踪的文件是指本来就被纳入版本控制管理的文件，在上次快照中有它们的记录，工作一段时间后，它们的状态可能是未更新，已修改或者已放入暂存区。而所有其他文件都属于未跟踪文件。它们既没有上次更新时的快照，也不在当前的暂存区域。初次克隆某个仓库时，工作目录中的所有文件都属于已跟踪文件，且状态为未修改。</p>
+<p>在编辑过某些文件之后，Git 将这些文件标为已修改。我们逐步把这些修改过的文件放到暂存区域，直到最后一次性提交所有这些暂存起来的文件，如此重复。</p>
+<p><img src="18333fig0201-tn.png" alt="文件的状态变化周期"></p>
+<p>未跟踪的文件意味着Git在之前的快照（提交）中没有这些文件。</p>
+<p><code>Git</code> 不会自动将之纳入跟踪范围，除非你明明白白地告诉它“我需要跟踪该文件”</p>
+<p><code>Changes to be committed</code> 说明是已暂存状态。</p>
+<p><code>Changes not staged for commit</code> 说明已跟踪文件的内容发生了变化，但还没有放到暂存区。</p>
+<p>有些文件无需纳入 Git 管理，也不希望它们总出现在未跟踪文件列表。<br>可以创建一个名为 <code>.gitignore</code> 的文件，列出要忽略文件模式。</p>
+<p><code>git diff --cached</code> （或 <code>git diff --staged</code>）查看已经暂存文件和上次提交时快照之间差异。</p>
+<p><code>git log</code> <code>-p</code> 选项展示每次提交内容差异，<code>-2</code> 显示最近的两次更新，<code>--pretty</code> 选项指定展示提交格式。</p>
+<p><code>git commit --amend</code> 撤消刚才的提交操作。</p>
+<p>远程仓库是指托管在网络上的项目仓库，可能会有好多个。管理远程仓库，包括添加远程库，移除废弃远程库，管理各式远程库分支，定义是否跟踪分支。</p>
+<p><code>git remote</code> 查看当前配置有哪些远程仓库。<code>-v (--verbose)</code> 选项显示对应的克隆地址。</p>
+<p><code>git remote add [shortname] [url]</code> 添加一个新的远程仓库，指定名字。</p>
+<p><code>git fetch [remote-name]</code> 从远程仓库抓取数据到本地。</p>
+<p><code></code></p>
+<hr>
+</div></div><div class="post-main post-comment"></div></article><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
